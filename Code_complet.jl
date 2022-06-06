@@ -18,6 +18,7 @@ function maxi(Liste, Len)
     return(Lsol)
 end
 
+
 function Stabilite(n, Nb=100, inf=0, sup=0.1, p=2.0, q=0.05)
     u1 = p/( (p+q)^2)
     u2 = p+q 
