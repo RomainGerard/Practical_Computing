@@ -1,6 +1,7 @@
 using LinearAlgebra
 using Plots
 using DifferentialEquations
+using PlotlyJS
 
 #_____________________________________________________________________________________________________________________
 # Analyse_Stabilité
@@ -159,6 +160,8 @@ function schema_euler(type, u0, T, dt, d = 0.037)
     return Uevol
 end
 
+data = schema_euler("explicit", generer_U0(80), 10.0, 10.0/4000.0)
+plot(heatmap(data))
 #_____________________________________________________________________________________________________________________
 # Fonctions supplémentaires pour afficher facilement
 #_____________________________________________________________________________________________________________________
