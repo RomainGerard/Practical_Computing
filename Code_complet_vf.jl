@@ -1,5 +1,6 @@
 using LinearAlgebra
 using Plots
+using DifferentialEquations
 
 #_____________________________________________________________________________________________________________________
 # Analyse_Stabilité
@@ -188,3 +189,26 @@ end
 
 #animer_schema_euler(10,4000,80, "implicit")
 #animer_schema_euler(10,4000,80, "explicit")
+
+#_____________________________________________________________________________________________________________________
+# Black Box ODE
+#_____________________________________________________________________________________________________________________
+
+function fctn_evolution(dU,U,prmtr,t)
+    (J,d) = prmtr
+    Unxt = f(U) + Deriv_spat(U,d)
+    for i in 1:(2*J)
+        dU[i]= Unxt[i]
+    end
+end
+
+function BlackBox(U0,T,d=0.037)
+    J = Int(size(U0)[1]/2)
+    prmtr = (J,d)
+    time_span = (0., T)
+    pblm = ODEProblem(fctn_evolution, U0, time_span, prmtr)
+    sol = solve(pblm)
+    return sol
+end
+
+#BlackBox(generer_U0(80), 10)
