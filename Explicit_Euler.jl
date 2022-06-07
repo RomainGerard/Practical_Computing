@@ -4,7 +4,8 @@ using Plots
 #Explicit Euler
 #_____________________________________________________________________________________________________________________
 
-function f(Un, J, p = 2.0, q = 0.05) # calcule le terme de gauche généré par la fonction f
+function f(Un, p = 2.0, q = 0.05) # calcule le terme de gauche généré par la fonction f
+    J = Int(size(Un)[1]/2)
     F = zeros(2*J,1)
     for j in 1:J
         F[j] = p - Un[j]*(Un[J+j]^2) # p - U1(n,j)* U2(n,j)^2
@@ -13,9 +14,12 @@ function f(Un, J, p = 2.0, q = 0.05) # calcule le terme de gauche généré par 
     return F
 end
 
-function Deriv_spat(U, J, dx, d) #calcule le terme de droite généré par le produit de la matrice D et de la dérivée seconde de U en x
-    Deriv2 = zeros(2*J,1)
+function Deriv_spat(U, d) #calcule le terme de droite généré par le produit de la matrice D et de la dérivée seconde de U en x
+    J = Int(size(U)[1]/2)
+    dx = (2*pi)/(J-1)
     dx2 = dx^2
+
+    Deriv2 = zeros(2*J,1)
     # Conditions périodiques pour U_1
     Deriv2[1] = (U[2] - 2*U[1] + U[J]) /dx2
     Deriv2[J] = (U[1] - 2*U[J] + U[J-1]) /dx2
@@ -30,20 +34,17 @@ function Deriv_spat(U, J, dx, d) #calcule le terme de droite généré par le pr
     return Deriv2
 end
 
-function next_Un(Un, J, dx, dt, d) # calcule Un+1 en fonction de Un
-    #U_next = Un + dt*( f(Un, J) + Deriv_spat(Un, J, dx, d) )
-    U_next = Un + dt*Deriv_spat(Un, J, dx, d) 
+function next_Un(Un, dt, d) # calcule Un+1 en fonction de Un
+    U_next = Un + dt*( f(Un) + Deriv_spat(Un, d) )
     return U_next
 end
 
-function explicit_euler(f, u0, T, dt, d = 0.037)
-    J = Int(size(u0)[1] /2)
-    dx = (2.0*pi)/J
+function explicit_euler(fct, u0, T, dt, d = 0.037)
     N = Int(floor(T/dt))
     Un = u0
     Uevol = [Un]
     for i in 1:N
-        Un = f(Un, J, dx, dt, d)
+        Un = fct(Un, dt, d)
         push!(Uevol, Un)
     end
     return Uevol
